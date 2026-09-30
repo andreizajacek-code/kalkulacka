@@ -1,4 +1,4 @@
-name: Build ZOZNAM ULOH APK
+name: Build ZOZNAM ULOH stable APK
 
 on:
   push:
@@ -24,13 +24,14 @@ jobs:
           echo "3788983e579638597b494891745cf931a745c7269ea991bbb9f836d50c4b0d53  ZOZNAM_ULOH_source.zip" | sha256sum -c -
           unzip -q ZOZNAM_ULOH_source.zip
 
-      - name: Apply UI overrides
+      - name: Apply app changes
         shell: bash
         run: |
           cp zoznam-uloh-overrides/Ui.java ZOZNAM_ULOH/app/src/main/java/sk/zoznamuloh/app/Ui.java
           cp zoznam-uloh-overrides/OverlayService.java ZOZNAM_ULOH/app/src/main/java/sk/zoznamuloh/app/OverlayService.java
           python zoznam-uloh-overrides/TaskEditorActivity.patch.py
           python zoznam-uloh-overrides/MainActivity.patch.py
+          python zoznam-uloh-overrides/StablePackage.patch.py
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
@@ -40,9 +41,13 @@ jobs:
 
       - name: Verify Android SDK
         shell: bash
-        run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          test -d "$ANDROID_HOME/platforms/android-35"
+        run: test -d "$ANDROID_HOME/platforms/android-35"
+
+      - name: Restore stable debug signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: zoznam-uloh-stable-debug-keystore-v1
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -54,11 +59,11 @@ jobs:
         run: gradle --no-daemon assembleDebug
 
       - name: Prepare APK
-        run: cp ZOZNAM_ULOH/app/build/outputs/apk/debug/app-debug.apk ZOZNAM-ULOH-v2.apk
+        run: cp ZOZNAM_ULOH/app/build/outputs/apk/debug/app-debug.apk ZOZNAM-ULOH-2.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: ZOZNAM-ULOH-v2-APK
-          path: ZOZNAM-ULOH-v2.apk
+          name: ZOZNAM-ULOH-2-APK
+          path: ZOZNAM-ULOH-2.apk
           if-no-files-found: error
