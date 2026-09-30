@@ -19,7 +19,7 @@ jobs:
       - name: Rebuild source archive
         shell: bash
         run: |
-          cat             zoznam-uloh-build-payload/part-00.b64             zoznam-uloh-build-payload/part-01.b64             zoznam-uloh-build-payload/part-02.b64             zoznam-uloh-build-payload/part-03.b64             zoznam-uloh-build-payload/part-04.b64             zoznam-uloh-build-payload/part-05-00.b64             zoznam-uloh-build-payload/part-05-01.b64             zoznam-uloh-build-payload/part-05-02.b64             zoznam-uloh-build-payload/part-05-03.b64             > source.b64
+          cat zoznam-uloh-build-payload/part-00.b64 zoznam-uloh-build-payload/part-01.b64 zoznam-uloh-build-payload/part-02.b64 zoznam-uloh-build-payload/part-03.b64 zoznam-uloh-build-payload/part-04.b64 zoznam-uloh-build-payload/part-05-00.b64 zoznam-uloh-build-payload/part-05-01.b64 zoznam-uloh-build-payload/part-05-02.b64 zoznam-uloh-build-payload/part-05-03.b64 > source.b64
           base64 -d source.b64 > ZOZNAM_ULOH_source.zip
           echo "3788983e579638597b494891745cf931a745c7269ea991bbb9f836d50c4b0d53  ZOZNAM_ULOH_source.zip" | sha256sum -c -
           unzip -q ZOZNAM_ULOH_source.zip
@@ -30,14 +30,12 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install Android SDK 35
+      - name: Verify Android SDK
         shell: bash
         run: |
-          yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          ls "$ANDROID_HOME/platforms" | tail
+          test -d "$ANDROID_HOME/platforms/android-35"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
