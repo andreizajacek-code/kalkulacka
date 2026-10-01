@@ -56,3 +56,10 @@ jobs:
           git commit -m "Publish ZBERATEL build result [skip ci]" || true
           git push origin HEAD:zberatel-app
           exit "$RC"
+
+      - name: Upload installable APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ZBERATEL-APK
+          path: zberatel/build/ZBERATEL.apk
+          if-no-files-found: error
