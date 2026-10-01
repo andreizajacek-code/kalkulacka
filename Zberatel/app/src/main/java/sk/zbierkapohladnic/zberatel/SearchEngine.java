@@ -46,7 +46,7 @@ public final class SearchEngine {
         List<String> queries = new ArrayList<>();
         for (String topic : topics) {
             String terms = contentTerms(c);
-            queries.add("\\"" + topic + "\\" " + terms);
+            queries.add("\"" + topic + "\" " + terms);
 
             List<String> domainList = new ArrayList<>(domains);
             for (int i = 0; i < domainList.size(); i += 4) {
@@ -57,7 +57,7 @@ public final class SearchEngine {
                     sites.append("site:").append(domainList.get(j));
                 }
                 sites.append(")");
-                queries.add(sites + " \\"" + topic + "\\" " + terms);
+                queries.add(sites + " \"" + topic + "\" " + terms);
             }
         }
 
@@ -306,7 +306,7 @@ public final class SearchEngine {
     private static String htmlDecode(String s) {
         if (s == null) return "";
         return s.replace("&amp;", "&")
-                .replace("&quot;", "\\"")
+                .replace("&quot;", "\"")
                 .replace("&#39;", "'")
                 .replace("&#x27;", "'")
                 .replace("&lt;", "<")
