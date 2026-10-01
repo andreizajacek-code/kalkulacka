@@ -4,21 +4,21 @@ on:
   push:
     branches: [ zberatel-app ]
     paths:
-      - 'zberatel/**'
-      - '.github/workflows/build-zberatel.yml'
-  pull_request:
-    branches: [ main ]
-    paths:
-      - 'zberatel/**'
+      - 'zberatel/source.tgz.b64'
       - '.github/workflows/build-zberatel.yml'
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Unpack ZBERATEL sources
+        with:
+          ref: zberatel-app
+      - name: Unpack sources
         run: base64 -d zberatel/source.tgz.b64 | tar xz
       - uses: actions/setup-java@v4
         with:
@@ -26,15 +26,29 @@ jobs:
           java-version: '17'
       - uses: android-actions/setup-android@v3
       - name: Install Android SDK
-        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+        run: yes | sdkmanager --licenses >/dev/null || true; sdkmanager "platforms;android-35" "platforms;android-36" "build-tools;35.0.0" "build-tools;36.0.0"
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '9.6.0'
-      - name: Build APK
-        working-directory: Zberatel
-        run: gradle :app:assembleDebug --stacktrace
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ZBERATEL-APK
-          path: Zberatel/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
+          gradle-version: '8.10.2'
+      - name: Build and publish result
+        shell: bash
+        run: |
+          set +e
+          mkdir -p zberatel/build
+          cd Zberatel
+          gradle :app:assembleDebug --stacktrace > ../zberatel-build.log 2>&1
+          RC=$?
+          cd ..
+          cp zberatel-build.log zberatel/build/build.log
+          if [ "$RC" -eq 0 ]; then
+            cp Zberatel/app/build/outputs/apk/debug/app-debug.apk zberatel/build/ZBERATEL.apk
+            printf "SUCCESS\ncommit=%s\n" "$GITHUB_SHA" > zberatel/build/status.txt
+          else
+            printf "FAILED\ncommit=%s\n" "$GITHUB_SHA" > zberatel/build/status.txt
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Zberatel zberatel/build
+          git commit -m "Publish ZBERATEL build result [skip ci]" || true
+          git push origin HEAD:zberatel-app
+          exit "$RC"
