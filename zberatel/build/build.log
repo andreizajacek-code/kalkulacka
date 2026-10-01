@@ -62,7 +62,7 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect UP-TO-DATE
 > Task :app:assembleDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_3-1790890869074.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_3-1790891012422.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/kalkulacka/kalkulacka/Zberatel/build/reports/problems/problems-report.html
 
@@ -72,9 +72,21 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/9.6.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 51s
+BUILD SUCCESSFUL in 39s
 33 actionable tasks: 16 executed, 17 up-to-date
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.6.0/userguide/configuration_cache_enabling.html
+Failed to load signer "signer #1"
+java.io.FileNotFoundException: /home/runner/.android/debug.keystore (No such file or directory)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:216)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:111)
+	at com.android.apksigner.SignerParams.loadKeyStoreFromFile(SignerParams.java:431)
+	at com.android.apksigner.SignerParams.loadPrivateKeyAndCertsFromKeyStore(SignerParams.java:318)
+	at com.android.apksigner.SignerParams.loadPrivateKeyAndCerts(SignerParams.java:246)
+	at com.android.apksigner.ApkSignerTool.getSignerConfig(ApkSignerTool.java:455)
+	at com.android.apksigner.ApkSignerTool.sign(ApkSignerTool.java:368)
+	at com.android.apksigner.ApkSignerTool.main(ApkSignerTool.java:94)
 Verifies
 Verified using v1 scheme (JAR signing): false
 Verified using v2 scheme (APK Signature Scheme v2): true
