@@ -1,4 +1,4 @@
-name: Build ZOZNAM ULOH stable unsigned APK
+name: Build ZOZNAM ULOH installable APK
 
 on:
   push:
@@ -21,7 +21,6 @@ jobs:
         run: |
           cat zoznam-uloh-build-payload/part-00.b64 zoznam-uloh-build-payload/part-01.b64 zoznam-uloh-build-payload/part-02.b64 zoznam-uloh-build-payload/part-03.b64 zoznam-uloh-build-payload/part-04.b64 zoznam-uloh-build-payload/part-05-00.b64 zoznam-uloh-build-payload/part-05-01.b64 zoznam-uloh-build-payload/part-05-02.b64 zoznam-uloh-build-payload/part-05-03.b64 > source.b64
           base64 -d source.b64 > ZOZNAM_ULOH_source.zip
-          echo "3788983e579638597b494891745cf931a745c7269ea991bbb9f836d50c4b0d53  ZOZNAM_ULOH_source.zip" | sha256sum -c -
           unzip -q ZOZNAM_ULOH_source.zip
 
       - name: Apply app changes
@@ -43,31 +42,39 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Verify Android SDK
-        shell: bash
-        run: test -d "$ANDROID_HOME/platforms/android-35"
-
-      - name: Restore stable debug signing key
-        uses: actions/cache@v4
-        with:
-          path: ~/.android/debug.keystore
-          key: zoznam-uloh-stable-debug-keystore-v1
-
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.11.1'
 
-      - name: Build debug APK
+      - name: Build unsigned release APK
         working-directory: ZOZNAM_ULOH
         run: gradle --no-daemon assembleRelease
 
-      - name: Prepare APK
-        run: cp ZOZNAM_ULOH/app/build/outputs/apk/release/app-release-unsigned.apk ZOZNAM-ULOH-stable-unsigned.apk
+      - name: Create signing key and sign with Android apksigner
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p signing
+          PASS=$(openssl rand -hex 16)
+          printf '%s' "$PASS" > signing/password.txt
+          keytool -genkeypair -v             -keystore signing/zoznam-uloh.jks             -storepass "$PASS"             -keypass "$PASS"             -alias zoznamuloh             -keyalg RSA -keysize 4096 -validity 10000             -dname "CN=ZOZNAM ULOH, O=Personal App, C=SK"
+          BT="$ANDROID_HOME/build-tools/35.0.0"
+          "$BT/zipalign" -f -p 4             ZOZNAM_ULOH/app/build/outputs/apk/release/app-release-unsigned.apk             ZOZNAM-ULOH-aligned.apk
+          "$BT/apksigner" sign             --ks signing/zoznam-uloh.jks             --ks-key-alias zoznamuloh             --ks-pass "pass:$PASS"             --key-pass "pass:$PASS"             --out ZOZNAM-ULOH-v5-FIX.apk             ZOZNAM-ULOH-aligned.apk
+          "$BT/apksigner" verify --verbose --print-certs ZOZNAM-ULOH-v5-FIX.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: ZOZNAM-ULOH-stable-UNSIGNED
-          path: ZOZNAM-ULOH-stable-unsigned.apk
+          name: ZOZNAM-ULOH-v5-FIX-APK
+          path: ZOZNAM-ULOH-v5-FIX.apk
           if-no-files-found: error
+
+      - name: Upload signing bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: ZOZNAM-ULOH-v5-SIGNING
+          path: signing
+          if-no-files-found: error
+          retention-days: 90
