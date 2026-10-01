@@ -40,8 +40,8 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :app:checkDebugDuplicateClasses
 > Task :app:desugarDebugFileDependencies
 > Task :app:mergeExtDexDebug UP-TO-DATE
-> Task :app:checkDebugAarMetadata
 > Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:checkDebugAarMetadata
 > Task :app:mergeLibDexDebug
 > Task :app:compileDebugNavigationResources
 > Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
@@ -62,7 +62,7 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect UP-TO-DATE
 > Task :app:assembleDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_3-1790891186590.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1790891311915.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/kalkulacka/kalkulacka/Zberatel/build/reports/problems/problems-report.html
 
@@ -72,21 +72,9 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/9.6.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 46s
+BUILD SUCCESSFUL in 47s
 33 actionable tasks: 16 executed, 17 up-to-date
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.6.0/userguide/configuration_cache_enabling.html
-Failed to load signer "signer #1"
-java.io.FileNotFoundException: /home/runner/.android/debug.keystore (No such file or directory)
-	at java.base/java.io.FileInputStream.open0(Native Method)
-	at java.base/java.io.FileInputStream.open(FileInputStream.java:216)
-	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
-	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:111)
-	at com.android.apksigner.SignerParams.loadKeyStoreFromFile(SignerParams.java:431)
-	at com.android.apksigner.SignerParams.loadPrivateKeyAndCertsFromKeyStore(SignerParams.java:318)
-	at com.android.apksigner.SignerParams.loadPrivateKeyAndCerts(SignerParams.java:246)
-	at com.android.apksigner.ApkSignerTool.getSignerConfig(ApkSignerTool.java:455)
-	at com.android.apksigner.ApkSignerTool.sign(ApkSignerTool.java:368)
-	at com.android.apksigner.ApkSignerTool.main(ApkSignerTool.java:94)
 Verifies
 Verified using v1 scheme (JAR signing): false
 Verified using v2 scheme (APK Signature Scheme v2): true
@@ -96,14 +84,14 @@ Verified using v4 scheme (APK Signature Scheme v4): false
 Verified for SourceStamp: false
 Number of signers: 1
 Signer #1 certificate DN: C=US, O=Android, CN=Android Debug
-Signer #1 certificate SHA-256 digest: 244f195c0eae585f3f15da8a1e41766e6813c2a1e67ce9e715a99ae97706c3e6
-Signer #1 certificate SHA-1 digest: c23b6420bcae3b2a7a6d01304f888f6c8d7b47a4
-Signer #1 certificate MD5 digest: 207e7a37bd214a7641484153c0c4283c
+Signer #1 certificate SHA-256 digest: 6e84ddff9a24fe79a126ee3f8a8e9f55d35171b48931fbe5e55cb2d7153c00b3
+Signer #1 certificate SHA-1 digest: 4a451cb0fc5377979da2ad3fdec2c4fc1302f0dc
+Signer #1 certificate MD5 digest: 8102cd211ca95d79638a69957b292eb4
 Signer #1 key algorithm: RSA
 Signer #1 key size (bits): 2048
-Signer #1 public key SHA-256 digest: ce794cc3d22f04e7038562fd6ea4fe5a4194bd77ed9f2ee179e123d9466b01f7
-Signer #1 public key SHA-1 digest: e36573b94b56fdde672edc5ae639f7b5811c9292
-Signer #1 public key MD5 digest: 409b7cfd0b263d35845bccae609cdfc5
+Signer #1 public key SHA-256 digest: 9bdc68e3c34c8b960eb338be10cf75be23278ecd12a31fd581e93b94fd44d459
+Signer #1 public key SHA-1 digest: 564b14c072cc16bebe8e82d0fa6aac8f8788832c
+Signer #1 public key MD5 digest: 67a26a5c6bdb54b979e89618f9752bd8
 package: name='sk.zbierkapohladnic.zberatel' versionCode='1' versionName='0.1.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'
 minSdkVersion:'26'
 targetSdkVersion:'36'
