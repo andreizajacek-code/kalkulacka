@@ -1,4 +1,4 @@
-name: Build ZOZNAM ULOH stable APK
+name: Build ZOZNAM ULOH v3 APK
 
 on:
   push:
@@ -28,9 +28,13 @@ jobs:
         shell: bash
         run: |
           cp zoznam-uloh-overrides/Ui.java ZOZNAM_ULOH/app/src/main/java/sk/zoznamuloh/app/Ui.java
+          cp zoznam-uloh-overrides/AppSettings.java ZOZNAM_ULOH/app/src/main/java/sk/zoznamuloh/app/AppSettings.java
+          cp zoznam-uloh-overrides/NotificationHelper.java ZOZNAM_ULOH/app/src/main/java/sk/zoznamuloh/app/NotificationHelper.java
           cp zoznam-uloh-overrides/OverlayService.java ZOZNAM_ULOH/app/src/main/java/sk/zoznamuloh/app/OverlayService.java
+          cp zoznam-uloh-overrides/SettingsActivity.java ZOZNAM_ULOH/app/src/main/java/sk/zoznamuloh/app/SettingsActivity.java
           python zoznam-uloh-overrides/TaskEditorActivity.patch.py
           python zoznam-uloh-overrides/MainActivity.patch.py
+          python zoznam-uloh-overrides/Manifest.patch.py
           python zoznam-uloh-overrides/StablePackage.patch.py
 
       - name: Set up Java 17
@@ -59,11 +63,11 @@ jobs:
         run: gradle --no-daemon assembleDebug
 
       - name: Prepare APK
-        run: cp ZOZNAM_ULOH/app/build/outputs/apk/debug/app-debug.apk ZOZNAM-ULOH-2.apk
+        run: cp ZOZNAM_ULOH/app/build/outputs/apk/debug/app-debug.apk ZOZNAM-ULOH-v3.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: ZOZNAM-ULOH-2-APK
+          name: ZOZNAM-ULOH-v3-APK
           path: ZOZNAM-ULOH-2.apk
           if-no-files-found: error
