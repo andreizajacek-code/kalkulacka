@@ -1,0 +1,34 @@
+name: Build ZBERATEL APK
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'zberatel/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unpack ZBERATEL sources
+        run: base64 -d zberatel/source.tgz.b64 | tar xz
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install Android SDK
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.6.0'
+      - name: Build APK
+        working-directory: Zberatel
+        run: gradle :app:assembleDebug --stacktrace
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ZBERATEL-APK
+          path: Zberatel/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
