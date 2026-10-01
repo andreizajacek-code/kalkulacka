@@ -1,20 +1,12 @@
 plugins { id 'com.android.application' }
 
 android {
-    signingConfigs {
-        debug {
-            enableV1Signing = true
-            enableV2Signing = true
-            enableV3Signing = true
-        }
-    }
-
     namespace 'sk.zbierkapohladnic.zberatel'
     compileSdk 36
 
     defaultConfig {
         applicationId 'sk.zbierkapohladnic.zberatel'
-        minSdk 23
+        minSdk 26
         targetSdk 36
         versionCode 1
         versionName '0.1.0'
