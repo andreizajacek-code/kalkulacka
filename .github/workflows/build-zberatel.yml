@@ -44,7 +44,15 @@ jobs:
           RC=$?
           cd ..
           if [ "$RC" -eq 0 ]; then
-            cp Zberatel/app/build/outputs/apk/debug/app-debug.apk zberatel/build/ZBERATEL.apk
+            "$ANDROID_HOME/build-tools/36.0.0/apksigner" sign \
+              --ks "$HOME/.android/debug.keystore" \
+              --ks-pass pass:android \
+              --key-pass pass:android \
+              --v1-signing-enabled true \
+              --v2-signing-enabled true \
+              --v3-signing-enabled true \
+              --out zberatel/build/ZBERATEL.apk \
+              Zberatel/app/build/outputs/apk/debug/app-debug.apk >> zberatel-build.log 2>&1
             "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs zberatel/build/ZBERATEL.apk >> zberatel-build.log 2>&1
             VERIFY_RC=$?
             "$ANDROID_HOME/build-tools/36.0.0/aapt2" dump badging zberatel/build/ZBERATEL.apk >> zberatel-build.log 2>&1
