@@ -69,5 +69,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ZOZNAM-ULOH-v3-APK
-          path: ZOZNAM-ULOH-2.apk
+          path: ZOZNAM-ULOH-v3.apk
           if-no-files-found: error
