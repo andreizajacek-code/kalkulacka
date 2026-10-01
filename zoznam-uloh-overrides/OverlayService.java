@@ -212,6 +212,7 @@ public class OverlayService extends Service {
         snoozePanel.addView(bottom, bottomLp);
 
         addSnoozeButton(bottom, "+1 hod", 60, t.id);
+        addSnoozeButton(bottom, "+1 deň", 24 * 60, t.id);
         TextView custom = smallButton("Vlastný čas");
         LinearLayout.LayoutParams customLp = new LinearLayout.LayoutParams(0, Ui.dp(this, 42), 1);
         Ui.margin(customLp, this, 4, 0, 0, 0);
