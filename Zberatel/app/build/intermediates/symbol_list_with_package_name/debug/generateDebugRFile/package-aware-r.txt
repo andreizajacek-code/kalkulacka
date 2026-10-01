@@ -1,0 +1,2 @@
+sk.zbierkapohladnic.zberatel
+style AppTheme

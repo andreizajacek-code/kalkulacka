@@ -1,0 +1,84 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="sk.zbierkapohladnic.zberatel"
+4    android:versionCode="1"
+5    android:versionName="0.1.0" >
+6
+7    <uses-sdk
+7-->INJECTED
+8        android:minSdkVersion="26"
+8-->INJECTED
+9        android:targetSdkVersion="36" />
+9-->INJECTED
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:3:5-67
+11-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:3:22-64
+12    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+12-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:4:5-79
+12-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:4:22-76
+13    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+13-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:5:5-77
+13-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:5:22-74
+14    <uses-permission android:name="android.permission.VIBRATE" />
+14-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:6:5-66
+14-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:6:22-63
+15    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+15-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:7:5-81
+15-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:7:22-78
+16
+17    <application
+17-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:9:5-29:19
+18        android:allowBackup="true"
+18-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:10:9-35
+19        android:debuggable="true"
+20        android:extractNativeLibs="false"
+20-->INJECTED
+21        android:icon="@android:drawable/sym_def_app_icon"
+21-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:11:9-58
+22        android:label="ZBERATEĽ"
+22-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:12:9-33
+23        android:theme="@style/AppTheme"
+23-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:13:9-40
+24        android:usesCleartextTraffic="false" >
+24-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:14:9-45
+25        <activity
+25-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:15:9-22:20
+26            android:name="sk.zbierkapohladnic.zberatel.MainActivity"
+26-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:16:13-41
+27            android:exported="true" >
+27-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:17:13-36
+28            <intent-filter>
+28-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:18:13-21:29
+29                <action android:name="android.intent.action.MAIN" />
+29-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:19:17-69
+29-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:19:25-66
+30
+31                <category android:name="android.intent.category.LAUNCHER" />
+31-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:20:17-77
+31-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:20:27-74
+32            </intent-filter>
+33        </activity>
+34
+35        <receiver
+35-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:23:9-77
+36            android:name="sk.zbierkapohladnic.zberatel.SearchReceiver"
+36-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:23:19-49
+37            android:exported="false" />
+37-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:23:50-74
+38        <receiver
+38-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:24:9-28:20
+39            android:name="sk.zbierkapohladnic.zberatel.BootReceiver"
+39-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:24:19-47
+40            android:exported="true" >
+40-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:24:48-71
+41            <intent-filter>
+41-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:25:13-27:29
+42                <action android:name="android.intent.action.BOOT_COMPLETED" />
+42-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:26:17-79
+42-->/home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/AndroidManifest.xml:26:25-76
+43            </intent-filter>
+44        </receiver>
+45    </application>
+46
+47</manifest>

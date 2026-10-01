@@ -1,0 +1,8 @@
+sk.zbierkapohladnic.zberatel.app-pngs-0 /home/runner/work/kalkulacka/kalkulacka/Zberatel/app/build/generated/res/pngs/debug
+sk.zbierkapohladnic.zberatel.app-updated_navigation_xml-1 /home/runner/work/kalkulacka/kalkulacka/Zberatel/app/build/generated/updated_navigation_xml/debug
+sk.zbierkapohladnic.zberatel.app-packageDebugResources-2 /home/runner/work/kalkulacka/kalkulacka/Zberatel/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
+sk.zbierkapohladnic.zberatel.app-packageDebugResources-3 /home/runner/work/kalkulacka/kalkulacka/Zberatel/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
+sk.zbierkapohladnic.zberatel.app-debug-4 /home/runner/work/kalkulacka/kalkulacka/Zberatel/app/build/intermediates/merged_res/debug/mergeDebugResources
+sk.zbierkapohladnic.zberatel.app-debug-5 /home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/debug/res
+sk.zbierkapohladnic.zberatel.app-main-6 /home/runner/work/kalkulacka/kalkulacka/Zberatel/app/src/main/res
+gradleHome-0 /home/runner/.gradle
