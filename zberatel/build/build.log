@@ -34,35 +34,35 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets
 > Task :app:compressDebugAssets
-> Task :app:generateDebugGlobalSynthetics UP-TO-DATE
+> Task :app:generateDebugGlobalSynthetics
 > Task :app:processDebugJavaRes NO-SOURCE
 > Task :app:mergeDebugJavaResource UP-TO-DATE
 > Task :app:checkDebugDuplicateClasses
 > Task :app:desugarDebugFileDependencies
-> Task :app:mergeExtDexDebug UP-TO-DATE
 > Task :app:mapDebugSourceSetPaths UP-TO-DATE
-> Task :app:checkDebugAarMetadata
 > Task :app:mergeLibDexDebug
+> Task :app:checkDebugAarMetadata
 > Task :app:compileDebugNavigationResources
-> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug UP-TO-DATE
-> Task :app:processDebugMainManifest UP-TO-DATE
-> Task :app:processDebugManifest UP-TO-DATE
-> Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :app:processDebugMainManifest
+> Task :app:mergeDebugResources
+> Task :app:processDebugManifest
 > Task :app:mergeDebugJniLibFolders
 > Task :app:mergeDebugNativeLibs NO-SOURCE
 > Task :app:stripDebugDebugSymbols NO-SOURCE
-> Task :app:mergeDebugResources
+> Task :app:mergeExtDexDebug
 > Task :app:validateSigningDebug
-> Task :app:processDebugResources UP-TO-DATE
-> Task :app:dexBuilderDebug
 > Task :app:writeDebugAppMetadata UP-TO-DATE
-> Task :app:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :app:writeDebugSigningConfigVersions
+> Task :app:processDebugManifestForPackage
+> Task :app:processDebugResources
+> Task :app:dexBuilderDebug
 > Task :app:mergeProjectDexDebug
 > Task :app:packageDebug
-> Task :app:createDebugApkListingFileRedirect UP-TO-DATE
+> Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1790891311915.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1790891425210.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/kalkulacka/kalkulacka/Zberatel/build/reports/problems/problems-report.html
 
@@ -72,28 +72,29 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/9.6.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 47s
-33 actionable tasks: 16 executed, 17 up-to-date
+BUILD SUCCESSFUL in 55s
+33 actionable tasks: 25 executed, 8 up-to-date
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.6.0/userguide/configuration_cache_enabling.html
 Verifies
-Verified using v1 scheme (JAR signing): false
+Verified using v1 scheme (JAR signing): true
 Verified using v2 scheme (APK Signature Scheme v2): true
-Verified using v3 scheme (APK Signature Scheme v3): false
+Verified using v3 scheme (APK Signature Scheme v3): true
 Verified using v3.1 scheme (APK Signature Scheme v3.1): false
 Verified using v4 scheme (APK Signature Scheme v4): false
 Verified for SourceStamp: false
 Number of signers: 1
 Signer #1 certificate DN: C=US, O=Android, CN=Android Debug
-Signer #1 certificate SHA-256 digest: 6e84ddff9a24fe79a126ee3f8a8e9f55d35171b48931fbe5e55cb2d7153c00b3
-Signer #1 certificate SHA-1 digest: 4a451cb0fc5377979da2ad3fdec2c4fc1302f0dc
-Signer #1 certificate MD5 digest: 8102cd211ca95d79638a69957b292eb4
+Signer #1 certificate SHA-256 digest: f7c23f75adc5e3b81942427ad86b0f1fca710ef092b86d2bb43f7d2e81a96ff9
+Signer #1 certificate SHA-1 digest: 7ce2ef2a0dddadcf07d963715c651cbbbc755002
+Signer #1 certificate MD5 digest: 5afbd9ec9c00a0ecfca1a027577a6c6e
 Signer #1 key algorithm: RSA
 Signer #1 key size (bits): 2048
-Signer #1 public key SHA-256 digest: 9bdc68e3c34c8b960eb338be10cf75be23278ecd12a31fd581e93b94fd44d459
-Signer #1 public key SHA-1 digest: 564b14c072cc16bebe8e82d0fa6aac8f8788832c
-Signer #1 public key MD5 digest: 67a26a5c6bdb54b979e89618f9752bd8
+Signer #1 public key SHA-256 digest: 395709f0e183621cd2134c8993b3096fa7db7f55b609856edf4f34fd936fe7d1
+Signer #1 public key SHA-1 digest: f2f03c0d135418eb17b20184c0669779fe781a98
+Signer #1 public key MD5 digest: d8741a76fb1cd57a0ba0a1ab75e6bc21
+WARNING: META-INF/com/android/build/gradle/app-metadata.properties not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.
 package: name='sk.zbierkapohladnic.zberatel' versionCode='1' versionName='0.1.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'
-minSdkVersion:'26'
+minSdkVersion:'23'
 targetSdkVersion:'36'
 uses-permission: name='android.permission.INTERNET'
 uses-permission: name='android.permission.ACCESS_NETWORK_STATE'

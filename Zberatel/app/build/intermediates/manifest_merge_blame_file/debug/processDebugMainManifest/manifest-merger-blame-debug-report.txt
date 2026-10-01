@@ -6,7 +6,7 @@
 6
 7    <uses-sdk
 7-->INJECTED
-8        android:minSdkVersion="26"
+8        android:minSdkVersion="23"
 8-->INJECTED
 9        android:targetSdkVersion="36" />
 9-->INJECTED
