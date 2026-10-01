@@ -43,15 +43,18 @@ jobs:
           gradle :app:assembleDebug --stacktrace > ../zberatel-build.log 2>&1
           RC=$?
           cd ..
-          cp zberatel-build.log zberatel/build/build.log
           if [ "$RC" -eq 0 ]; then
             cp Zberatel/app/build/outputs/apk/debug/app-debug.apk zberatel/build/ZBERATEL.apk
             "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs zberatel/build/ZBERATEL.apk >> zberatel-build.log 2>&1
+            VERIFY_RC=$?
             "$ANDROID_HOME/build-tools/36.0.0/aapt2" dump badging zberatel/build/ZBERATEL.apk >> zberatel-build.log 2>&1
+            BADGING_RC=$?
+            if [ "$VERIFY_RC" -ne 0 ] || [ "$BADGING_RC" -ne 0 ]; then RC=1; fi
             printf "SUCCESS\ncommit=%s\n" "$GITHUB_SHA" > zberatel/build/status.txt
           else
             printf "FAILED\ncommit=%s\n" "$GITHUB_SHA" > zberatel/build/status.txt
           fi
+          cp zberatel-build.log zberatel/build/build.log
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add Zberatel zberatel/build
