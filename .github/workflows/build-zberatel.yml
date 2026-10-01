@@ -5,6 +5,7 @@ on:
     branches: [ zberatel-app ]
     paths:
       - 'zberatel/source.tgz.b64'
+      - 'Zberatel/**'
       - '.github/workflows/build-zberatel.yml'
   workflow_dispatch:
 
