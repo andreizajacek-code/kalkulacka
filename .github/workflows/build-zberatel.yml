@@ -33,6 +33,14 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.6.0'
+
+      - name: Search connectivity smoke test
+        shell: bash
+        run: |
+          echo "BING_RSS=$(curl -L -A 'Mozilla/5.0 (Linux; Android 14)' -o /tmp/bing.xml -s -w '%{http_code}' 'https://www.bing.com/search?format=rss&cc=sk&setlang=sk-SK&q=Tatry%20pohladnica')"
+          echo "DDG_LITE=$(curl -L -A 'Mozilla/5.0 (Linux; Android 14)' -o /tmp/ddg.html -s -w '%{http_code}' 'https://lite.duckduckgo.com/lite/?q=Tatry%20pohladnica')"
+          echo "Bing bytes: $(wc -c < /tmp/bing.xml)"
+          echo "DDG bytes: $(wc -c < /tmp/ddg.html)"
       - name: Build and publish result
         shell: bash
         run: |
