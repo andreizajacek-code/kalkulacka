@@ -23,13 +23,13 @@ Add android.sync.suppressAgpWarnings=UNSUPPORTED_PROJECT_OPTION_USE to the gradl
 > Task :app:stripReleaseDebugSymbols NO-SOURCE
 > Task :app:extractReleaseNativeSymbolTables NO-SOURCE
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
-> Task :app:checkReleaseDuplicateClasses
 > Task :app:generateReleaseResources
+> Task :app:checkReleaseDuplicateClasses
 > Task :app:packageReleaseResources
 > Task :app:processReleaseNavigationResources
 > Task :app:javaPreCompileRelease
-> Task :app:checkReleaseAarMetadata
 > Task :app:mapReleaseSourceSetPaths
+> Task :app:checkReleaseAarMetadata
 > Task :app:parseReleaseLocalResources
 > Task :app:compileReleaseNavigationResources
 > Task :app:generateReleaseRFile
@@ -46,26 +46,26 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :app:processReleaseManifest
 > Task :app:desugarReleaseFileDependencies
 > Task :app:mergeReleaseStartupProfile
-> Task :app:mergeReleaseArtProfile
 > Task :app:processReleaseManifestForPackage
 > Task :app:generateReleaseAssets UP-TO-DATE
+> Task :app:mergeReleaseArtProfile
 > Task :app:mergeReleaseAssets
 > Task :app:compressReleaseAssets
 > Task :app:extractReleaseVersionControlInfo
-> Task :app:extractProguardFiles
 > Task :app:processReleaseResources
-> Task :app:generateReleaseLintVitalReportModel
-> Task :app:mergeExtDexRelease
+> Task :app:extractProguardFiles
 > Task :app:dexBuilderRelease
 > Task :app:mergeReleaseGlobalSynthetics
+> Task :app:mergeExtDexRelease
+> Task :app:generateReleaseLintVitalReportModel
 > Task :app:mergeDexRelease
 > Task :app:compileReleaseArtProfile
 > Task :app:processReleaseJavaRes NO-SOURCE
 > Task :app:collectReleaseDependencies
-> Task :app:optimizeReleaseResources
 > Task :app:sdkReleaseDependencyData
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
+> Task :app:optimizeReleaseResources
 > Task :app:mergeReleaseJavaResource
 > Task :app:lintVitalAnalyzeRelease
 > Task :app:lintVitalReportRelease
@@ -73,7 +73,7 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :app:packageRelease
 > Task :app:createReleaseApkListingFileRedirect
 > Task :app:assembleRelease
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1790939814431.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1790940139582.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/kalkulacka/kalkulacka/Zberatel/build/reports/problems/problems-report.html
 
@@ -105,7 +105,7 @@ Signer #1 public key SHA-1 digest: 0316998f4108e1d2153fb61bd140f33b8cf34b36
 Signer #1 public key MD5 digest: 5fc8c5b65927eb240a85449c4a1bcc30
 WARNING: META-INF/com/android/build/gradle/app-metadata.properties not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.
 WARNING: META-INF/version-control-info.textproto not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.
-package: name='sk.zbierkapohladnic.zberatel' versionCode='4' versionName='0.4.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'
+package: name='sk.zbierkapohladnic.zberatel' versionCode='5' versionName='0.5.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'
 minSdkVersion:'23'
 targetSdkVersion:'36'
 uses-permission: name='android.permission.INTERNET'
