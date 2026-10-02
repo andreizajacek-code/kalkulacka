@@ -59,6 +59,10 @@ jobs:
           echo "AUKRO=$(curl -L -A 'Mozilla/5.0 (Linux; Android 14)' -o /tmp/aukro.html -s -w '%{http_code}' 'https://aukro.cz/lp/nejkvalitnejsi-filokartie-pohlednice-tatry')"
           echo "Aukro bytes: $(wc -c < /tmp/aukro.html)"
           grep -oE 'href="[^"]+-[0-9]{9,}"' /tmp/aukro.html | head -n 8 || true
+          echo "AUKRO_GENERIC=$(curl -L -A 'Mozilla/5.0 (Linux; Android 14)' -o /tmp/aukro-generic.html -s -w '%{http_code}' 'https://aukro.cz/vysledky-vyhledavani?text=chata%20pod%20chlebom&searchRedirectDisabled=true')"
+          echo "Aukro generic bytes: $(wc -c < /tmp/aukro-generic.html)"
+          grep -oE 'href="[^"]+-[0-9]{9,}"' /tmp/aukro-generic.html | head -n 8 || true
+          grep -oE 'sort=[A-Za-z0-9_-]+' /tmp/aukro-generic.html | sort -u | head -n 20 || true
 
       - name: Build and sign
         shell: bash
