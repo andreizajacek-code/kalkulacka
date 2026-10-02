@@ -21,6 +21,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public final class SearchEngine {
     private static final Pattern DDG_RESULT = Pattern.compile("<a[^>]+class=[\\\"']result__a[\\\"'][^>]+href=[\\\"']([^\\\"']+)[\\\"'][^>]*>(.*?)</a>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
@@ -30,6 +34,8 @@ public final class SearchEngine {
     private static final Pattern RSS_LINK = Pattern.compile("<link>(.*?)</link>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
     private static final Pattern RSS_DESC = Pattern.compile("<description>(.*?)</description>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
     private static final Pattern YEAR = Pattern.compile("\\b(18\\d{2}|19\\d{2}|20[0-2]\\d)\\b");
+    private static final Pattern JSON_PRICE = Pattern.compile("\\\"price\\\"\\s*:\\s*\\\"?([0-9]+(?:[.,][0-9]{1,2})?)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern JSON_CURRENCY = Pattern.compile("\\\"priceCurrency\\\"\\s*:\\s*\\\"([A-Z]{3})\\\"", Pattern.CASE_INSENSITIVE);
 
     private SearchEngine() {}
 
@@ -47,6 +53,7 @@ public final class SearchEngine {
         for (String topic : topics) {
             String terms = contentTerms(c);
             queries.add("\"" + topic + "\" " + terms);
+            queries.add(topic + " " + terms);
 
             List<String> domainList = new ArrayList<>(domains);
             for (int i = 0; i < domainList.size(); i += 4) {
@@ -61,7 +68,7 @@ public final class SearchEngine {
             }
         }
 
-        if (queries.size() > 18) queries = new ArrayList<>(queries.subList(0, 18));
+        if (queries.size() > 24) queries = new ArrayList<>(queries.subList(0, 24));
 
         Map<String, SearchResult> unique = new LinkedHashMap<>();
         Set<String> ignored = AppPrefs.ignoredUrls(c);
@@ -74,7 +81,7 @@ public final class SearchEngine {
             if (progress != null) progress.onProgress(done, queries.size(), query);
 
             try {
-                List<SearchResult> partial = queryWithFallback(c, query, topics);
+                List<SearchResult> partial = queryAcrossProviders(c, query, topics);
                 successfulQueries++;
                 for (SearchResult r : partial) {
                     if (ignored.contains(r.url)) continue;
@@ -97,34 +104,53 @@ public final class SearchEngine {
 
         List<SearchResult> out = new ArrayList<>(unique.values());
         Collections.sort(out, Comparator.comparingInt((SearchResult r) -> r.score).reversed());
-        if (out.size() > 120) return new ArrayList<>(out.subList(0, 120));
+        if (out.size() > 120) out = new ArrayList<>(out.subList(0, 120));
+
+        if (progress != null && !out.isEmpty()) {
+            progress.onProgress(queries.size(), queries.size(), "Načítavam náhľady a ceny…");
+        }
+        enrichTopResults(out);
         return out;
     }
 
-    private static List<SearchResult> queryWithFallback(Context c, String q, List<String> topics) throws Exception {
+    private static List<SearchResult> queryAcrossProviders(Context c, String q, List<String> topics) throws Exception {
+        Map<String, SearchResult> merged = new LinkedHashMap<>();
         List<String> errors = new ArrayList<>();
+        int providersOk = 0;
 
         try {
             List<SearchResult> x = queryBingRss(c, q, topics);
-            if (!x.isEmpty()) return x;
+            providersOk++;
+            mergeResults(merged, x);
         } catch (Exception e) {
             errors.add("Bing " + shortError(e));
         }
 
         try {
             List<SearchResult> x = queryDuckLite(c, q, topics);
-            if (!x.isEmpty()) return x;
+            providersOk++;
+            mergeResults(merged, x);
         } catch (Exception e) {
             errors.add("DuckDuckGo Lite " + shortError(e));
         }
 
         try {
-            return queryDuckHtml(c, q, topics);
+            List<SearchResult> x = queryDuckHtml(c, q, topics);
+            providersOk++;
+            mergeResults(merged, x);
         } catch (Exception e) {
             errors.add("DuckDuckGo " + shortError(e));
         }
 
-        throw new Exception(String.join(" / ", errors));
+        if (providersOk == 0) throw new Exception(String.join(" / ", errors));
+        return new ArrayList<>(merged.values());
+    }
+
+    private static void mergeResults(Map<String, SearchResult> target, List<SearchResult> incoming) {
+        for (SearchResult r : incoming) {
+            SearchResult old = target.get(r.url);
+            if (old == null || r.score > old.score) target.put(r.url, r);
+        }
     }
 
     private static List<SearchResult> queryBingRss(Context c, String q, List<String> topics) throws Exception {
@@ -246,6 +272,110 @@ public final class SearchEngine {
 
         if (obviousNoise && !explicitCollectible) return false;
         return explicitCollectible;
+    }
+
+    private static void enrichTopResults(List<SearchResult> results) {
+        int limit = Math.min(results.size(), 40);
+        if (limit <= 0) return;
+
+        ExecutorService pool = Executors.newFixedThreadPool(6);
+        List<Future<?>> futures = new ArrayList<>();
+        for (int i = 0; i < limit; i++) {
+            SearchResult r = results.get(i);
+            futures.add(pool.submit(() -> enrichOne(r)));
+        }
+
+        pool.shutdown();
+        try {
+            pool.awaitTermination(22, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            pool.shutdownNow();
+        }
+    }
+
+    private static void enrichOne(SearchResult r) {
+        HttpURLConnection con = null;
+        try {
+            URL pageUrl = new URL(r.url);
+            con = (HttpURLConnection) pageUrl.openConnection();
+            con.setConnectTimeout(5000);
+            con.setReadTimeout(6500);
+            con.setInstanceFollowRedirects(true);
+            con.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/124 Mobile Safari/537.36");
+            con.setRequestProperty("Accept-Language", "sk-SK,sk;q=0.9,cs;q=0.7,en;q=0.5");
+            con.setRequestProperty("Accept", "text/html,application/xhtml+xml;q=0.9,*/*;q=0.7");
+
+            int code = con.getResponseCode();
+            if (code < 200 || code >= 400) return;
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
+            StringBuilder html = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null && html.length() < 1_500_000) html.append(line).append('\n');
+            br.close();
+
+            String page = html.toString();
+
+            String image = firstMeta(page, "og:image", "twitter:image", "twitter:image:src", "image");
+            if (!image.isEmpty()) {
+                image = htmlDecode(image.trim());
+                try { image = new URL(pageUrl, image).toString(); } catch (Exception ignored) {}
+                if (image.startsWith("http://") || image.startsWith("https://")) r.imageUrl = image;
+            }
+
+            String amount = firstMeta(page, "product:price:amount", "og:price:amount", "price", "product:price");
+            String currency = firstMeta(page, "product:price:currency", "og:price:currency", "priceCurrency");
+
+            if (amount.isEmpty()) {
+                Matcher pm = JSON_PRICE.matcher(page);
+                if (pm.find()) amount = pm.group(1);
+            }
+            if (currency.isEmpty()) {
+                Matcher cm = JSON_CURRENCY.matcher(page);
+                if (cm.find()) currency = cm.group(1);
+            }
+
+            if (amount.isEmpty()) {
+                Pattern visible = Pattern.compile("(?i)(?:cena|price|preis)[^0-9]{0,25}([0-9][0-9\\s.,]{0,12})\\s*(€|EUR|Kč|CZK|USD|\\$|GBP|£)");
+                Matcher vm = visible.matcher(clean(page));
+                if (vm.find()) {
+                    amount = vm.group(1).trim().replaceAll("\\s+", " ");
+                    currency = vm.group(2);
+                }
+            }
+
+            if (!amount.isEmpty()) r.price = formatPrice(amount, currency);
+        } catch (Exception ignored) {
+        } finally {
+            if (con != null) con.disconnect();
+        }
+    }
+
+    private static String firstMeta(String html, String... keys) {
+        for (String key : keys) {
+            String q = Pattern.quote(key);
+            Pattern p1 = Pattern.compile("(?is)<meta[^>]+(?:property|name|itemprop)=[\\\"']" + q + "[\\\"'][^>]+content=[\\\"']([^\\\"']+)[\\\"'][^>]*>");
+            Matcher m1 = p1.matcher(html);
+            if (m1.find()) return m1.group(1);
+
+            Pattern p2 = Pattern.compile("(?is)<meta[^>]+content=[\\\"']([^\\\"']+)[\\\"'][^>]+(?:property|name|itemprop)=[\\\"']" + q + "[\\\"'][^>]*>");
+            Matcher m2 = p2.matcher(html);
+            if (m2.find()) return m2.group(1);
+        }
+        return "";
+    }
+
+    private static String formatPrice(String amount, String currency) {
+        String a = amount == null ? "" : amount.trim();
+        String c = currency == null ? "" : currency.trim().toUpperCase(Locale.ROOT);
+        if (a.isEmpty()) return "";
+        if (c.equals("EUR") || c.equals("€")) return a + " €";
+        if (c.equals("CZK") || c.equals("KČ")) return a + " Kč";
+        if (c.equals("USD") || c.equals("$")) return "$" + a;
+        if (c.equals("GBP") || c.equals("£")) return "£" + a;
+        return c.isEmpty() ? a : a + " " + c;
     }
 
     private static int score(Context c, String text, List<String> topics) {
