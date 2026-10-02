@@ -36,10 +36,15 @@ public final class SearchEngine {
     private static final Pattern YEAR = Pattern.compile("\\b(18\\d{2}|19\\d{2}|20[0-2]\\d)\\b");
     private static final Pattern JSON_PRICE = Pattern.compile("\\\"price\\\"\\s*:\\s*\\\"?([0-9]+(?:[.,][0-9]{1,2})?)", Pattern.CASE_INSENSITIVE);
     private static final Pattern JSON_CURRENCY = Pattern.compile("\\\"priceCurrency\\\"\\s*:\\s*\\\"([A-Z]{3})\\\"", Pattern.CASE_INSENSITIVE);
+    private static final Pattern AUKRO_OFFER_LINK = Pattern.compile("href=[\\\"'](/[^\\\"'?#]+-\\d{9,})[\\\"']", Pattern.CASE_INSENSITIVE);
 
     private SearchEngine() {}
 
     public static List<SearchResult> search(Context c, Progress progress) throws Exception {
+        return search(c, progress, false);
+    }
+
+    public static List<SearchResult> search(Context c, Progress progress, boolean deepManualSearch) throws Exception {
         List<String> topics = splitCsv(AppPrefs.topics(c));
         if (topics.isEmpty()) topics.add("Tatry");
 
@@ -72,8 +77,31 @@ public final class SearchEngine {
 
         Map<String, SearchResult> unique = new LinkedHashMap<>();
         Set<String> ignored = AppPrefs.ignoredUrls(c);
+
+        // Aukro is queried directly. Search engines are only a supplementary source.
+        if (AppPrefs.sources(c).contains("aukro.cz") || AppPrefs.sources(c).contains("aukro.sk")) {
+            int aukroPages = deepManualSearch ? 4 : 1;
+            int topicNo = 0;
+            for (String topic : topics) {
+                topicNo++;
+                if (progress != null) {
+                    progress.onProgress(topicNo, topics.size(), "Aukro priamo • " + topic);
+                }
+                try {
+                    List<SearchResult> direct = queryAukroDirect(c, topic, topics, aukroPages);
+                    for (SearchResult r : direct) {
+                        if (ignored.contains(r.url)) continue;
+                        SearchResult old = unique.get(r.url);
+                        if (old == null || r.score > old.score) unique.put(r.url, r);
+                    }
+                } catch (Exception ignoredAukro) {
+                    // General web search below remains available as fallback.
+                }
+            }
+        }
+
         int done = 0;
-        int successfulQueries = 0;
+        int successfulQueries = unique.isEmpty() ? 0 : 1;
         String lastError = "";
 
         for (String query : queries) {
@@ -104,13 +132,84 @@ public final class SearchEngine {
 
         List<SearchResult> out = new ArrayList<>(unique.values());
         Collections.sort(out, Comparator.comparingInt((SearchResult r) -> r.score).reversed());
-        if (out.size() > 120) out = new ArrayList<>(out.subList(0, 120));
+        if (out.size() > 240) out = new ArrayList<>(out.subList(0, 240));
 
         if (progress != null && !out.isEmpty()) {
             progress.onProgress(queries.size(), queries.size(), "Načítavam náhľady a ceny…");
         }
         enrichTopResults(out);
         return out;
+    }
+
+    private static List<SearchResult> queryAukroDirect(Context c, String topic, List<String> allTopics, int pages) throws Exception {
+        Map<String, SearchResult> found = new LinkedHashMap<>();
+        String q = "pohlednice " + topic;
+        String encoded = URLEncoder.encode(q, StandardCharsets.UTF_8.toString());
+
+        for (int page = 1; page <= pages; page++) {
+            String address = "https://aukro.cz/vysledky-vyhledavani?text=" + encoded
+                    + "&size=180&searchRedirectDisabled=true&page=" + page;
+            String html;
+            try {
+                html = download(address, "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/124 Mobile Safari/537.36");
+            } catch (Exception e) {
+                if (page == 1) throw e;
+                break;
+            }
+
+            Matcher m = AUKRO_OFFER_LINK.matcher(html);
+            int pageAdded = 0;
+            while (m.find()) {
+                String path = htmlDecode(m.group(1));
+                String url = "https://aukro.cz" + path;
+                if (found.containsKey(url)) continue;
+
+                String title = aukroTitleFromPath(path);
+                if (!topicMatchesTitle(topic, title)) continue;
+
+                String synthetic = "Pohlednice " + title + " Aukro";
+                int sc = score(c, synthetic, allTopics);
+                SearchResult r = new SearchResult(title, url,
+                        "Priamy výsledok z kategórie pohľadníc na Aukre.", "aukro.cz",
+                        "Pohľadnica", detectYear(title), sc);
+                found.put(url, r);
+                pageAdded++;
+            }
+
+            // No matching offers on this page usually means we are already outside useful results.
+            if (page > 1 && pageAdded == 0) break;
+        }
+
+        return new ArrayList<>(found.values());
+    }
+
+    private static String aukroTitleFromPath(String path) {
+        String s = path == null ? "" : path;
+        if (s.startsWith("/")) s = s.substring(1);
+        s = s.replaceFirst("-\\d{9,}$", "");
+        s = s.replace('-', ' ');
+        try { s = URLDecoder.decode(s, StandardCharsets.UTF_8.toString()); } catch (Exception ignored) {}
+        s = s.replaceAll("\\s+", " ").trim();
+        if (s.isEmpty()) return "Pohľadnica na Aukre";
+        return s.substring(0, 1).toUpperCase(Locale.ROOT) + s.substring(1);
+    }
+
+    private static boolean topicMatchesTitle(String topic, String title) {
+        String t = fold(title);
+        String q = fold(topic);
+        if (q.length() > 2 && t.contains(q)) return true;
+
+        int meaningful = 0;
+        int hits = 0;
+        for (String token : q.split("\\s+")) {
+            if (token.length() <= 3) continue;
+            meaningful++;
+            String stem = token.substring(0, Math.min(5, token.length()));
+            if (t.contains(token) || (stem.length() >= 4 && t.contains(stem))) hits++;
+        }
+        if (meaningful == 0) return false;
+        if (meaningful == 1) return hits == 1;
+        return hits >= Math.min(2, meaningful);
     }
 
     private static List<SearchResult> queryAcrossProviders(Context c, String q, List<String> topics) throws Exception {
@@ -275,7 +374,7 @@ public final class SearchEngine {
     }
 
     private static void enrichTopResults(List<SearchResult> results) {
-        int limit = Math.min(results.size(), 40);
+        int limit = Math.min(results.size(), 70);
         if (limit <= 0) return;
 
         ExecutorService pool = Executors.newFixedThreadPool(6);
