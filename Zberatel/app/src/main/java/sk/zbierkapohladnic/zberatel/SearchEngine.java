@@ -208,10 +208,44 @@ public final class SearchEngine {
     private static void addResult(Context c, List<String> topics, List<SearchResult> out, String title, String link, String snippet) {
         String source = host(link);
         String text = title + " " + snippet + " " + source;
+
+        // Precision first: a place-name match alone is NOT enough.
+        // The result must also look like a collectible/historical material.
+        if (!isRelevantCandidate(c, text)) return;
+
         int score = score(c, text, topics);
         String type = detectType(text);
         String year = detectYear(text);
         out.add(new SearchResult(title, link, snippet.length() > 340 ? snippet.substring(0, 340) : snippet, source, type, year, score));
+    }
+
+    private static boolean isRelevantCandidate(Context c, String text) {
+        String t = fold(text);
+
+        boolean postcard = AppPrefs.includePostcards(c) && containsAny(t,
+                "pohladnic", "pohlednic", "postcard", "ansichtskarte", "carte postale",
+                "korespondencna karta", "korespondenční lístek");
+
+        boolean oldPhoto = AppPrefs.includePhotos(c)
+                && containsAny(t, "fotograf", "photo", "foto", "negativ", "diapozitiv", "albumin")
+                && containsAny(t, "stara", "stary", "stare", "historick", "dobov", "archiv", "vintage", "antik");
+
+        boolean historicalDoc = AppPrefs.includeDocs(c)
+                && containsAny(t, "dokument", "prospekt", "brozura", "letak", "mapa", "plan", "tlacovina", "tiskovina")
+                && containsAny(t, "stary", "stara", "stare", "historick", "dobov", "archiv", "vintage", "antik");
+
+        boolean explicitCollectible = postcard || oldPhoto || historicalDoc;
+
+        boolean obviousNoise = containsAny(t,
+                "nehnutelnost", "reality", "realit", "stavebny pozemok", "pozemok",
+                "rodinny dom", "byt ", "apartman", "prenajom", "developersk",
+                "hypoteka", "novostavba", "ubytovanie", "rezervacia", "booking",
+                "hotel ", "penzion", "wellness", "lyziarsky pobyt", "dovolenka",
+                "automobil", "vozidlo", "pneumatik", "autodiel", "motocykel",
+                "pracovna ponuka", "zamestnanie");
+
+        if (obviousNoise && !explicitCollectible) return false;
+        return explicitCollectible;
     }
 
     private static int score(Context c, String text, List<String> topics) {
@@ -226,13 +260,16 @@ public final class SearchEngine {
             }
         }
 
-        if (containsAny(t, "pohladnic", "postcard", "ansichtskarte", "carte postale", "doplnicova karta")) score += 30;
-        if (AppPrefs.includePhotos(c) && containsAny(t, "fotograf", "photo", "foto", "negativ", "diapozitiv")) score += 20;
-        if (AppPrefs.includeDocs(c) && containsAny(t, "dokument", "prospekt", "mapa", "letak", "brozura", "archiv")) score += 16;
-        if (containsAny(t, "aukro", "ebay", "delcampe", "bazos", "antikvariat", "auction", "aukcia", "predaj")) score += 14;
+        if (containsAny(t, "pohladnic", "pohlednic", "postcard", "ansichtskarte", "carte postale", "doplnicova karta")) score += 38;
+        if (AppPrefs.includePhotos(c) && containsAny(t, "fotograf", "photo", "foto", "negativ", "diapozitiv")
+                && containsAny(t, "stara", "stare", "historick", "dobov", "archiv", "vintage", "antik")) score += 30;
+        if (AppPrefs.includeDocs(c) && containsAny(t, "dokument", "prospekt", "mapa", "letak", "brozura", "archiv")
+                && containsAny(t, "stary", "stara", "stare", "historick", "dobov", "archiv", "vintage", "antik")) score += 26;
+        if (containsAny(t, "aukro", "ebay", "delcampe", "bazos", "antikvariat", "auction", "aukcia", "predaj")) score += 4;
 
         if (AppPrefs.excludeArticles(c) && containsAny(t, "clanok", "blog", "spravy", "wikipedia", "magazin")) score -= 34;
-        if (AppPrefs.excludeAccommodation(c) && containsAny(t, "ubytovanie", "rezervacia", "booking", "hotel booking", "pobyt")) score -= 35;
+        if (AppPrefs.excludeAccommodation(c) && containsAny(t, "ubytovanie", "rezervacia", "booking", "hotel booking", "pobyt")) score -= 60;
+        if (containsAny(t, "nehnutelnost", "reality", "realit", "stavebny pozemok", "pozemok", "rodinny dom", "novostavba", "hypoteka")) score -= 80;
         if (AppPrefs.excludeSocial(c) && containsAny(t, "facebook", "instagram", "tiktok", "diskusia", "forum")) score -= 30;
         if (!AppPrefs.includePostcards(c) && containsAny(t, "pohladnic", "postcard", "ansichtskarte")) score -= 35;
         if (!AppPrefs.includePhotos(c) && containsAny(t, "fotograf", "photo", "foto")) score -= 30;
