@@ -63,6 +63,10 @@ jobs:
           echo "Aukro generic bytes: $(wc -c < /tmp/aukro-generic.html)"
           grep -oE 'href="[^"]+-[0-9]{9,}"' /tmp/aukro-generic.html | head -n 8 || true
           grep -oE 'sort=[A-Za-z0-9_-]+' /tmp/aukro-generic.html | sort -u | head -n 20 || true
+          grep -oiE '.{0,100}(nejnov|newest|sort).{0,160}' /tmp/aukro.html | head -n 20 || true
+          echo "AUKRO_TOPIC=$(curl -L -A 'Mozilla/5.0 (Linux; Android 14)' -o /tmp/aukro-topic.html -s -w '%{http_code}' 'https://aukro.cz/lp/nejkvalitnejsi-filokartie-pohlednice-chata-pod-chlebom')"
+          echo "Aukro topic bytes: $(wc -c < /tmp/aukro-topic.html)"
+          grep -oE 'href="[^"]+-[0-9]{9,}"' /tmp/aukro-topic.html | head -n 8 || true
 
       - name: Build and sign
         shell: bash
