@@ -18,6 +18,7 @@ public final class DataStore {
                 JSONObject o = new JSONObject();
                 o.put("title", r.title); o.put("url", r.url); o.put("snippet", r.snippet);
                 o.put("source", r.source); o.put("type", r.type); o.put("year", r.year); o.put("score", r.score);
+                o.put("imageUrl", r.imageUrl); o.put("price", r.price);
                 a.put(o);
             }
         } catch (Exception ignored) {}
@@ -31,7 +32,8 @@ public final class DataStore {
             for (int i=0; i<a.length(); i++) {
                 JSONObject o = a.getJSONObject(i);
                 out.add(new SearchResult(o.optString("title"), o.optString("url"), o.optString("snippet"),
-                        o.optString("source"), o.optString("type"), o.optString("year"), o.optInt("score", 0)));
+                        o.optString("source"), o.optString("type"), o.optString("year"), o.optInt("score", 0),
+                        o.optString("imageUrl"), o.optString("price")));
             }
         } catch (Exception ignored) {}
         return out;
