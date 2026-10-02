@@ -4,7 +4,6 @@ on:
   push:
     branches: [ zberatel-app ]
     paths:
-      - 'zberatel/source.tgz.b64'
       - 'Zberatel/**'
       - '.github/workflows/build-zberatel.yml'
   workflow_dispatch:
@@ -18,53 +17,92 @@ jobs:
     env:
       ANDROID_HOME: /usr/local/lib/android/sdk
       ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+
     steps:
       - uses: actions/checkout@v4
         with:
           ref: zberatel-app
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
+
       - name: Install Android SDK packages
         run: |
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
-          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platform-tools" "platforms;android-35" "platforms;android-36" "build-tools;35.0.0" "build-tools;36.0.0"
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.6.0'
+
+      - name: Restore signing key
+        uses: actions/cache@v4
+        with:
+          path: zberatel/signing/zberatel-release.jks
+          key: zberatel-signing-key-v1
+
+      - name: Create signing key if missing
+        shell: bash
+        run: |
+          mkdir -p zberatel/signing
+          if [ ! -f zberatel/signing/zberatel-release.jks ]; then
+            keytool -genkeypair -noprompt               -keystore zberatel/signing/zberatel-release.jks               -storepass android               -keypass android               -alias zberatel               -keyalg RSA               -keysize 3072               -validity 10000               -dname "CN=ZBERATEL,O=ZBERATEL,C=SK"
+          fi
 
       - name: Search connectivity smoke test
         shell: bash
         run: |
           echo "BING_RSS=$(curl -L -A 'Mozilla/5.0 (Linux; Android 14)' -o /tmp/bing.xml -s -w '%{http_code}' 'https://www.bing.com/search?format=rss&cc=sk&setlang=sk-SK&q=Tatry%20pohladnica')"
           echo "DDG_LITE=$(curl -L -A 'Mozilla/5.0 (Linux; Android 14)' -o /tmp/ddg.html -s -w '%{http_code}' 'https://lite.duckduckgo.com/lite/?q=Tatry%20pohladnica')"
-          echo "Bing bytes: $(wc -c < /tmp/bing.xml)"
-          echo "DDG bytes: $(wc -c < /tmp/ddg.html)"
-      - name: Build and publish result
+
+      - name: Build and sign
         shell: bash
         run: |
           set +e
+          rm -rf zberatel/build
           mkdir -p zberatel/build
+
           cd Zberatel
-          gradle :app:assembleDebug --stacktrace > ../zberatel-build.log 2>&1
+          gradle :app:assembleRelease --stacktrace > ../zberatel-build.log 2>&1
           RC=$?
           cd ..
+
           if [ "$RC" -eq 0 ]; then
-            cp Zberatel/app/build/outputs/apk/debug/app-debug.apk zberatel/build/ZBERATEL.apk
-            "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs zberatel/build/ZBERATEL.apk >> zberatel-build.log 2>&1
+            UNSIGNED="Zberatel/app/build/outputs/apk/release/app-release-unsigned.apk"
+            ALIGNED="zberatel/build/ZBERATEL-aligned.apk"
+            FINAL="zberatel/build/ZBERATEL.apk"
+
+            "$ANDROID_HOME/build-tools/36.0.0/zipalign" -f -p 4 "$UNSIGNED" "$ALIGNED" >> zberatel-build.log 2>&1
+            ALIGN_RC=$?
+
+            "$ANDROID_HOME/build-tools/36.0.0/apksigner" sign               --ks zberatel/signing/zberatel-release.jks               --ks-key-alias zberatel               --ks-pass pass:android               --key-pass pass:android               --v1-signing-enabled true               --v2-signing-enabled true               --v3-signing-enabled true               --out "$FINAL" "$ALIGNED" >> zberatel-build.log 2>&1
+            SIGN_RC=$?
+
+            "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$FINAL" >> zberatel-build.log 2>&1
             VERIFY_RC=$?
-            "$ANDROID_HOME/build-tools/36.0.0/aapt2" dump badging zberatel/build/ZBERATEL.apk >> zberatel-build.log 2>&1
+            "$ANDROID_HOME/build-tools/36.0.0/zipalign" -c -p 4 "$FINAL" >> zberatel-build.log 2>&1
+            ZIPCHECK_RC=$?
+            "$ANDROID_HOME/build-tools/36.0.0/aapt2" dump badging "$FINAL" >> zberatel-build.log 2>&1
             BADGING_RC=$?
-            if [ "$VERIFY_RC" -ne 0 ] || [ "$BADGING_RC" -ne 0 ]; then RC=1; fi
+            rm -f "$ALIGNED"
+
+            if [ "$ALIGN_RC" -ne 0 ] || [ "$SIGN_RC" -ne 0 ] || [ "$VERIFY_RC" -ne 0 ] || [ "$ZIPCHECK_RC" -ne 0 ] || [ "$BADGING_RC" -ne 0 ]; then
+              RC=1
+            fi
+          fi
+
+          if [ "$RC" -eq 0 ]; then
             printf "SUCCESS\ncommit=%s\n" "$GITHUB_SHA" > zberatel/build/status.txt
           else
             printf "FAILED\ncommit=%s\n" "$GITHUB_SHA" > zberatel/build/status.txt
           fi
+
           cp zberatel-build.log zberatel/build/build.log
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Zberatel zberatel/build
+          git add zberatel/build
           git commit -m "Publish ZBERATEL build result [skip ci]" || true
           git push origin HEAD:zberatel-app
           exit "$RC"
