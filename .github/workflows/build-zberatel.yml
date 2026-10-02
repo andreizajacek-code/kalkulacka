@@ -56,6 +56,9 @@ jobs:
         run: |
           echo "BING_RSS=$(curl -L -A 'Mozilla/5.0 (Linux; Android 14)' -o /tmp/bing.xml -s -w '%{http_code}' 'https://www.bing.com/search?format=rss&cc=sk&setlang=sk-SK&q=Tatry%20pohladnica')"
           echo "DDG_LITE=$(curl -L -A 'Mozilla/5.0 (Linux; Android 14)' -o /tmp/ddg.html -s -w '%{http_code}' 'https://lite.duckduckgo.com/lite/?q=Tatry%20pohladnica')"
+          echo "AUKRO=$(curl -L -A 'Mozilla/5.0 (Linux; Android 14)' -o /tmp/aukro.html -s -w '%{http_code}' 'https://aukro.cz/lp/nejkvalitnejsi-filokartie-pohlednice-tatry')"
+          echo "Aukro bytes: $(wc -c < /tmp/aukro.html)"
+          grep -oE 'href="[^"]+-[0-9]{9,}"' /tmp/aukro.html | head -n 8 || true
 
       - name: Build and sign
         shell: bash
