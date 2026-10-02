@@ -17,52 +17,63 @@ It will be removed in version 10.0 of the Android Gradle plugin.
 Add android.sync.suppressAgpWarnings=UNSUPPORTED_PROJECT_OPTION_USE to the gradle.properties file to suppress this warning.
 
 > Task :app:preBuild UP-TO-DATE
-> Task :app:preDebugBuild UP-TO-DATE
-> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
-> Task :app:generateDebugResources UP-TO-DATE
-> Task :app:packageDebugResources
-> Task :app:processDebugNavigationResources
-> Task :app:parseDebugLocalResources UP-TO-DATE
-> Task :app:generateDebugRFile UP-TO-DATE
-> Task :app:compileDebugKotlin NO-SOURCE
-> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:preReleaseBuild UP-TO-DATE
+> Task :app:mergeReleaseJniLibFolders
+> Task :app:mergeReleaseNativeLibs NO-SOURCE
+> Task :app:stripReleaseDebugSymbols NO-SOURCE
+> Task :app:extractReleaseNativeSymbolTables NO-SOURCE
+> Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :app:checkReleaseDuplicateClasses
+> Task :app:generateReleaseResources
+> Task :app:packageReleaseResources
+> Task :app:processReleaseNavigationResources
+> Task :app:javaPreCompileRelease
+> Task :app:checkReleaseAarMetadata
+> Task :app:mapReleaseSourceSetPaths
+> Task :app:parseReleaseLocalResources
+> Task :app:compileReleaseNavigationResources
+> Task :app:generateReleaseRFile
+> Task :app:compileReleaseKotlin NO-SOURCE
+> Task :app:mergeReleaseResources
 
-> Task :app:compileDebugJavaWithJavac
+> Task :app:compileReleaseJavaWithJavac
 Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 
-> Task :app:generateDebugAssets UP-TO-DATE
-> Task :app:mergeDebugAssets
-> Task :app:compressDebugAssets
-> Task :app:generateDebugGlobalSynthetics UP-TO-DATE
-> Task :app:processDebugJavaRes NO-SOURCE
-> Task :app:mergeDebugJavaResource UP-TO-DATE
-> Task :app:checkDebugDuplicateClasses
-> Task :app:desugarDebugFileDependencies
-> Task :app:checkDebugAarMetadata
-> Task :app:mergeExtDexDebug UP-TO-DATE
-> Task :app:mapDebugSourceSetPaths UP-TO-DATE
-> Task :app:mergeLibDexDebug
-> Task :app:compileDebugNavigationResources
-> Task :app:createDebugCompatibleScreenManifests
-> Task :app:extractDeepLinksDebug UP-TO-DATE
-> Task :app:processDebugMainManifest
-> Task :app:mergeDebugResources
-> Task :app:processDebugManifest
-> Task :app:mergeDebugJniLibFolders
-> Task :app:mergeDebugNativeLibs NO-SOURCE
-> Task :app:stripDebugDebugSymbols NO-SOURCE
-> Task :app:validateSigningDebug
-> Task :app:writeDebugAppMetadata UP-TO-DATE
-> Task :app:writeDebugSigningConfigVersions UP-TO-DATE
-> Task :app:processDebugManifestForPackage
-> Task :app:processDebugResources
-> Task :app:dexBuilderDebug
-> Task :app:mergeProjectDexDebug
-> Task :app:packageDebug
-> Task :app:createDebugApkListingFileRedirect
-> Task :app:assembleDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_3-1790892491835.json
+> Task :app:createReleaseCompatibleScreenManifests
+> Task :app:extractDeepLinksRelease
+> Task :app:processReleaseMainManifest
+> Task :app:processReleaseManifest
+> Task :app:desugarReleaseFileDependencies
+> Task :app:mergeReleaseStartupProfile
+> Task :app:processReleaseManifestForPackage
+> Task :app:generateReleaseAssets UP-TO-DATE
+> Task :app:mergeReleaseArtProfile
+> Task :app:mergeReleaseAssets
+> Task :app:compressReleaseAssets
+> Task :app:extractReleaseVersionControlInfo
+> Task :app:extractProguardFiles
+> Task :app:processReleaseResources
+> Task :app:generateReleaseLintVitalReportModel
+> Task :app:mergeExtDexRelease
+> Task :app:dexBuilderRelease
+> Task :app:mergeReleaseGlobalSynthetics
+> Task :app:mergeDexRelease
+> Task :app:compileReleaseArtProfile
+> Task :app:processReleaseJavaRes NO-SOURCE
+> Task :app:collectReleaseDependencies
+> Task :app:optimizeReleaseResources
+> Task :app:sdkReleaseDependencyData
+> Task :app:writeReleaseAppMetadata
+> Task :app:writeReleaseSigningConfigVersions
+> Task :app:mergeReleaseJavaResource
+> Task :app:lintVitalAnalyzeRelease
+> Task :app:lintVitalReportRelease
+> Task :app:lintVitalRelease
+> Task :app:packageRelease
+> Task :app:createReleaseApkListingFileRedirect
+> Task :app:assembleRelease
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1790922887379.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/kalkulacka/kalkulacka/Zberatel/build/reports/problems/problems-report.html
 
@@ -73,7 +84,7 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 For more on this, please refer to https://docs.gradle.org/9.6.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
 BUILD SUCCESSFUL in 58s
-33 actionable tasks: 22 executed, 11 up-to-date
+43 actionable tasks: 43 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.6.0/userguide/configuration_cache_enabling.html
 Verifies
 Verified using v1 scheme (JAR signing): true
@@ -83,17 +94,18 @@ Verified using v3.1 scheme (APK Signature Scheme v3.1): false
 Verified using v4 scheme (APK Signature Scheme v4): false
 Verified for SourceStamp: false
 Number of signers: 1
-Signer #1 certificate DN: C=US, O=Android, CN=Android Debug
-Signer #1 certificate SHA-256 digest: 018df419182f540370a53da376428ff31b01a42e3401efbdd108a6640f884b32
-Signer #1 certificate SHA-1 digest: 1af6a6b78074b1a6597af18c07d804e74cdbe020
-Signer #1 certificate MD5 digest: d50a6de98c41241d510bb947edf86188
+Signer #1 certificate DN: CN=ZBERATEL, O=ZBERATEL, C=SK
+Signer #1 certificate SHA-256 digest: cf796915a148ca71858c8ed5878ae0683aeb6eab36c9565ec4aeff1c625c859a
+Signer #1 certificate SHA-1 digest: 6be24649e8c28cead5d4839936a7f196c92ccac3
+Signer #1 certificate MD5 digest: 9c8d9551ec9f87dd3a78b619a2c3b2d9
 Signer #1 key algorithm: RSA
-Signer #1 key size (bits): 2048
-Signer #1 public key SHA-256 digest: 08517f6893fd234315482e364e84586b18aaefe506b87aed510ed67feaef6cce
-Signer #1 public key SHA-1 digest: 01e3688e420959add56f5ad88f69aaffee89fca7
-Signer #1 public key MD5 digest: d733b9eb9f4365516957e418748eeeec
+Signer #1 key size (bits): 3072
+Signer #1 public key SHA-256 digest: eae707e9e96303eba387eec51efe82360c3f7600d46984d1b2b081ff688aae86
+Signer #1 public key SHA-1 digest: 0316998f4108e1d2153fb61bd140f33b8cf34b36
+Signer #1 public key MD5 digest: 5fc8c5b65927eb240a85449c4a1bcc30
 WARNING: META-INF/com/android/build/gradle/app-metadata.properties not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.
-package: name='sk.zbierkapohladnic.zberatel' versionCode='2' versionName='0.2.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'
+WARNING: META-INF/version-control-info.textproto not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.
+package: name='sk.zbierkapohladnic.zberatel' versionCode='3' versionName='0.3.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'
 minSdkVersion:'23'
 targetSdkVersion:'36'
 uses-permission: name='android.permission.INTERNET'
@@ -103,7 +115,6 @@ uses-permission: name='android.permission.VIBRATE'
 uses-permission: name='android.permission.RECEIVE_BOOT_COMPLETED'
 application-label:'ZBERATEĽ'
 application: label='ZBERATEĽ' icon=''
-application-debuggable
 launchable-activity: name='sk.zbierkapohladnic.zberatel.MainActivity'  label='' icon=''
 feature-group: label=''
   uses-feature: name='android.hardware.faketouch'
