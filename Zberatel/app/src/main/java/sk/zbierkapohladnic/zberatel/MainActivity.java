@@ -213,7 +213,7 @@ public class MainActivity extends Activity {
             try {
                 List<SearchResult> results = SearchEngine.search(this, (done,total,q) -> main.post(() -> {
                     if (searchProgress != null) searchProgress.setText("Hľadám " + done + "/" + total + " • " + shorten(q, 60));
-                }));
+                }), true);
                 DataStore.saveResults(this, results);
                 Set<String> known = AppPrefs.knownUrls(this);
                 for (SearchResult r: results) known.add(r.url);
