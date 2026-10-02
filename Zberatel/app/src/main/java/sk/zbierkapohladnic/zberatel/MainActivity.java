@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -268,6 +269,26 @@ public class MainActivity extends Activity {
         TextView source=tv(r.source,12,MUTED,Typeface.BOLD); top.addView(source);
         c.addView(top);
         TextView title=tv(r.title,18,NAVY,Typeface.BOLD); title.setPadding(0,dp(10),0,dp(5)); c.addView(title);
+
+        if (r.imageUrl!=null && !r.imageUrl.isEmpty()) {
+            ImageView preview=new ImageView(this);
+            preview.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            preview.setAdjustViewBounds(false);
+            preview.setBackground(round(Color.rgb(239,245,247),14));
+            preview.setClipToOutline(true);
+            LinearLayout.LayoutParams ip=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,dp(190));
+            ip.setMargins(0,dp(7),0,dp(9));
+            preview.setLayoutParams(ip);
+            c.addView(preview);
+            ImageLoader.load(preview,r.imageUrl);
+        }
+
+        if (r.price!=null && !r.price.isEmpty()) {
+            TextView price=tv(r.price,19,GREEN,Typeface.BOLD);
+            price.setPadding(0,dp(2),0,dp(7));
+            c.addView(price);
+        }
+
         LinearLayout tags=row();
         tags.addView(pill(r.type, TEAL_LIGHT, NAVY));
         if (!r.year.isEmpty()) tags.addView(pill(r.year, PAPER, NAVY));
