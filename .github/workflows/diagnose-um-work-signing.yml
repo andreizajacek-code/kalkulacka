@@ -1,0 +1,52 @@
+name: Diagnose UM WORK signing
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - um-work-apk
+    paths:
+      - '.github/workflows/diagnose-um-work-signing.yml'
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download installed-base build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: UM-WORK-v2-CLEAN
+          run-id: 37681802966
+          github-token: ${{ github.token }}
+          path: old
+
+      - name: Download v2.1 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: UM-WORK-v2-CLEAN
+          run-id: 37684381604
+          github-token: ${{ github.token }}
+          path: new
+
+      - name: Compare certificates
+        shell: bash
+        run: |
+          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)
+          OLD=$(find old -name '*.apk' | head -1)
+          NEW=$(find new -name '*.apk' | head -1)
+          {
+            echo "OLD"
+            "$APKSIGNER" verify --print-certs "$OLD"
+            echo
+            echo "NEW"
+            "$APKSIGNER" verify --print-certs "$NEW"
+            echo
+            echo "OLD_SHA256=$(sha256sum "$OLD")"
+            echo "NEW_SHA256=$(sha256sum "$NEW")"
+          } > signing-report.txt
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: signing-report
+          path: signing-report.txt
