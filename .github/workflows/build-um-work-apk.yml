@@ -1,0 +1,41 @@
+name: Build UM WORK APK
+
+on:
+  push:
+    branches:
+      - um-work-apk
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: um-work-android
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+
+      - name: Build debug APK
+        run: gradle --no-daemon assembleDebug
+
+      - name: Copy APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk ../UM-WORK.apk
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: UM-WORK-APK
+          path: UM-WORK.apk
+          if-no-files-found: error
