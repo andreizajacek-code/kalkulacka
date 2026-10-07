@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>UM WORK</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--text:#11131a;--muted:#747b8a;--line:#e8ebf2;--blue:#4b4df8;--prep:#9a6600;--prepbg:#fff0c8;--prod:#235cb6;--prodbg:#dce9ff;--done:#17783a;--donebg:#d9f5e1;--red:#b93446;--redbg:#fff0f2}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);font-family:Arial,Helvetica,sans-serif;color:var(--text)}body{padding-bottom:78px}
+.top{position:sticky;top:0;z-index:20;background:rgba(246,247,251,.97);border-bottom:1px solid var(--line);padding:14px 16px;display:flex;align-items:center;gap:10px}
+.logo{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#4b4df8,#7a43f2);display:grid;place-items:center;color:#fff;font-size:12px;font-weight:900}
+.name{font-weight:900;font-size:20px;flex:1}.plus{border:0;width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#4b4df8,#7149f6);color:#fff;font-size:27px}
+main{padding:13px}.search{width:100%;border:1px solid var(--line);border-radius:15px;background:#fff;padding:13px 14px;font-size:14px;outline:none;margin-bottom:10px}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}.tab{border:0;border-radius:13px;padding:10px 4px;background:#eceff5;color:#59606d;font-size:12px;font-weight:800}.tab.on{background:#fff;color:var(--blue);box-shadow:0 6px 22px #20284812}.cnt{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:50%;padding:0 4px;background:#dfe3ec;font-size:10px;margin-left:2px}.tab.on .cnt{background:#eef0ff}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:10px;box-shadow:0 8px 25px #262f5110}.row{display:flex;gap:10px;align-items:flex-start}.grow{flex:1;min-width:0}.title{font-size:16px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}.chip{font-size:10px;font-weight:900;padding:6px 8px;border-radius:999px}.prep{background:var(--prepbg);color:var(--prep)}.prod{background:var(--prodbg);color:var(--prod)}.done{background:var(--donebg);color:var(--done)}.wait,.high{background:var(--redbg);color:var(--red)}
+.meta{display:flex;gap:8px 12px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-top:9px}.graphics{font-size:11px;color:#555d69;margin-top:9px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#f2ad2c;margin-right:6px}.dot.ok{background:#29b963}.price{display:flex;justify-content:space-between;align-items:end;margin-top:12px}.price span{color:#505867;font-size:12px}.price strong{font-size:16px}.chev{border:0;background:#f2f4f8;width:36px;height:36px;border-radius:11px;color:#7c8493;font-size:22px}
+.empty{text-align:center;color:var(--muted);padding:50px 15px}.empty b{display:block;color:#3d4350;margin-bottom:5px}
+.bottom{position:fixed;bottom:0;left:0;right:0;height:70px;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;z-index:30;padding-bottom:env(safe-area-inset-bottom)}.nav{border:0;background:transparent;color:#7d8493;font-weight:800;font-size:11px}.nav.on{color:var(--blue)}.nav i{display:block;font-style:normal;font-size:22px;margin-bottom:2px}
+.page{display:none}.page.on{display:block}.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}.stat{background:#fff;border:1px solid var(--line);border-radius:17px;padding:14px}.stat small{color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:800}.stat b{display:block;font-size:21px;margin-top:5px}.section{font-weight:900;margin:18px 2px 10px}.due{background:#fff;border:1px solid var(--line);border-radius:15px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;gap:10px}.due span{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.cover{position:fixed;inset:0;background:#11182766;z-index:100;display:none;align-items:flex-end}.cover.on{display:flex}.sheet{width:100%;max-height:94vh;overflow:auto;background:#fff;border-radius:25px 25px 0 0;padding:10px 14px 24px}.handle{width:42px;height:5px;background:#dfe2e9;border-radius:99px;margin:0 auto 9px}.head{position:sticky;top:-10px;background:#fff;display:flex;align-items:center;gap:10px;padding:7px 0 10px;z-index:3}.head h2{font-size:19px;margin:0;flex:1}.x{border:0;background:#f0f2f6;width:38px;height:38px;border-radius:12px;font-size:17px}
+label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#6f7683;font-weight:900;margin:0 0 6px 2px}.field{margin-bottom:10px}.field input,.field textarea,.field select{width:100%;border:1px solid #e1e5ec;background:#f9fafc;border-radius:13px;padding:12px;font-size:14px;outline:none}.field textarea{min-height:75px;resize:vertical}.two{display:grid;grid-template-columns:1fr 1fr;gap:9px}.calc{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;background:#f5f7fb;border-radius:15px;padding:10px;margin-bottom:11px}.calc small{display:block;color:var(--muted);font-size:9px}.calc b{display:block;font-size:12px;margin-top:3px}.checks{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:11px}.check{border:1px solid var(--line);background:#f8f9fc;border-radius:12px;padding:10px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:7px}.check input{width:18px;height:18px;accent-color:var(--blue)}
+.actions{display:grid;grid-template-columns:1fr 2fr;gap:8px;margin-top:10px}.btn{border:0;border-radius:13px;padding:12px;font-weight:900}.primary{background:linear-gradient(135deg,#4b4df8,#7247f5);color:#fff}.secondary{background:#eef0f6;color:#373d49}.danger{background:var(--redbg);color:var(--red)}.moves{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.moves button{font-size:11px;padding:10px 5px}.editrow{display:flex;justify-content:flex-end;margin-top:10px}
+.toast{position:fixed;left:50%;bottom:80px;transform:translate(-50%,20px);background:#171a21;color:#fff;padding:10px 13px;border-radius:11px;font-size:12px;opacity:0;transition:.2s;z-index:200}.toast.on{opacity:1;transform:translate(-50%,0)}
+@media(max-width:380px){.two,.checks{grid-template-columns:1fr}.calc{grid-template-columns:1fr}.tab{font-size:11px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="logo">UM</div><div class="name">UM WORK</div><button class="plus" id="add">+</button></header>
+<section id="orders" class="page on"><main><input class="search" id="search" placeholder="Hľadať zákazníka, produkt, kontakt…"><div class="tabs"><button class="tab on" data-status="prep">Pripravuje sa <span class="cnt" id="cprep">0</span></button><button class="tab" data-status="prod">Vo výrobe <span class="cnt" id="cprod">0</span></button><button class="tab" data-status="done">Hotové <span class="cnt" id="cdone">0</span></button></div><div id="list"></div></main></section>
+<section id="overview" class="page"><main><div class="stats"><div class="stat"><small>Aktívne zákazky</small><b id="sa">0</b></div><div class="stat"><small>Vo výrobe</small><b id="sp">0</b></div><div class="stat"><small>Predaj spolu</small><b id="ss">0 €</b></div><div class="stat"><small>Odhad zisku</small><b id="sz">0 €</b></div></div><div class="section">Najbližšie termíny</div><div id="dues"></div></main></section>
+<nav class="bottom"><button class="nav on" data-page="orders"><i>▤</i>Zákazky</button><button class="nav" data-page="overview"><i>◫</i>Prehľad</button></nav>
+
+<div class="cover" id="cover"><div class="sheet"><div class="handle"></div><div class="head"><h2 id="formTitle">Nová zákazka</h2><button class="x" id="close">✕</button></div>
+<form id="form"><input type="hidden" id="id">
+<div class="field"><label>Zákazník / klub</label><input id="customer" required placeholder="napr. HK Poprad"></div>
+<div class="two"><div class="field"><label>Produkt</label><input id="product" required placeholder="napr. pletené šály"></div><div class="field"><label>Počet ks</label><input id="qty" inputmode="numeric" placeholder="300"></div></div>
+<div class="field"><label>Popis</label><textarea id="desc" placeholder="Farby, rozmer, špecifikácia…"></textarea></div>
+<div class="two"><div class="field"><label>Výrobná cena / ks</label><input id="cost" inputmode="decimal" placeholder="4,10"></div><div class="field"><label>Predajná cena / ks</label><input id="sale" inputmode="decimal" placeholder="6,90"></div></div>
+<div class="calc"><div><small>Výroba spolu</small><b id="cc">0 €</b></div><div><small>Predaj spolu</small><b id="cs">0 €</b></div><div><small>Zisk</small><b id="cz">0 €</b></div></div>
+<div class="two"><div class="field"><label>Kontakt</label><input id="contact" placeholder="Meno, mail alebo telefón"></div><div class="field"><label>Termín</label><input id="deadline" type="date"></div></div>
+<div class="two"><div class="field"><label>Dodávateľ / výrobca</label><input id="supplier" placeholder="napr. Poľsko"></div><div class="field"><label>Priorita</label><select id="priority"><option value="normal">Bežná</option><option value="high">Urgentná</option></select></div></div>
+<div class="field"><label>Zadanie grafiky</label><textarea id="graphics" placeholder="Pokyny pre grafika, farby, logá, texty…"></textarea></div>
+<div class="checks"><label class="check"><input type="checkbox" id="gd">Grafika hotová</label><label class="check"><input type="checkbox" id="ap">Návrh schválený</label><label class="check"><input type="checkbox" id="wa">Čaká na zákazníka</label><label class="check"><input type="checkbox" id="paid">Uhradené</label></div>
+<div class="field"><label>Stav zákazky</label><select id="status"><option value="prep">Pripravuje sa</option><option value="prod">Vo výrobe</option><option value="done">Hotové</option></select></div>
+<div class="actions"><button type="button" class="btn secondary" id="cancel">Zrušiť</button><button class="btn primary" type="submit">Uložiť zákazku</button></div>
+<div id="editTools" style="display:none"><div class="moves"><button type="button" class="btn secondary" data-move="prep">Pripravuje sa</button><button type="button" class="btn secondary" data-move="prod">Vo výrobe</button><button type="button" class="btn secondary" data-move="done">Hotové</button></div><div class="editrow"><button type="button" class="btn danger" id="del">Vymazať zákazku</button></div></div>
+</form></div></div><div class="toast" id="toast"></div>
+
+<script>
+const KEY='umwork.native.v1',$=q=>document.querySelector(q),$$=q=>[...document.querySelectorAll(q)];
+let status='prep',orders=[];
+const demo=[
+{id:'1',customer:'HK Poprad',product:'Pletené šály',qty:300,desc:'Obojstranné klubové šály, modro-biela kombinácia.',cost:4.10,sale:6.90,contact:'Peter Novák',deadline:'2026-10-14',supplier:'Poľsko',priority:'high',graphics:'Upraviť logo na koncoch šálu.',gd:false,ap:false,wa:true,paid:false,status:'prep',created:1},
+{id:'2',customer:'FC Tatran',product:'Mikiny',qty:50,desc:'Čierne mikiny, výšivka na hrudi.',cost:15.80,sale:24.90,contact:'Jana Kováčová',deadline:'2026-10-18',supplier:'SK dielňa',priority:'normal',graphics:'Finálna grafika.',gd:true,ap:true,wa:false,paid:false,status:'prod',created:2},
+{id:'3',customer:'MŠK',product:'Kľúčenky',qty:200,desc:'Gumené kľúčenky s logom klubu.',cost:1.20,sale:2.50,contact:'Marek H.',deadline:'2026-10-05',supplier:'Poľsko',priority:'normal',graphics:'Hotovo.',gd:true,ap:true,wa:false,paid:true,status:'done',created:3}
+];
+function load(){try{let r=localStorage.getItem(KEY);orders=r?JSON.parse(r):demo;if(!r)save(false)}catch(e){orders=demo}}
+function save(r=true){localStorage.setItem(KEY,JSON.stringify(orders));if(r){render();overview()}}
+function num(v){return Number(String(v||'').replace(/\s/g,'').replace(',','.'))||0}
+function eur(v){return new Intl.NumberFormat('sk-SK',{style:'currency',currency:'EUR'}).format(num(v))}
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function date(v){return v?new Date(v+'T12:00:00').toLocaleDateString('sk-SK',{day:'numeric',month:'numeric',year:'2-digit'}):'bez termínu'}
+function label(v){return v==='prep'?'Pripravuje sa':v==='prod'?'Vo výrobe':'Hotové'}
+function toast(t){$('#toast').textContent=t;$('#toast').classList.add('on');setTimeout(()=>$('#toast').classList.remove('on'),1500)}
+function render(){
+ ['prep','prod','done'].forEach(s=>$('#c'+s).textContent=orders.filter(o=>o.status===s).length);
+ let q=$('#search').value.toLowerCase().trim();
+ let a=orders.filter(o=>o.status===status).filter(o=>!q||[o.customer,o.product,o.contact,o.desc,o.graphics,o.supplier].join(' ').toLowerCase().includes(q)).sort((a,b)=>a.priority!==b.priority?(a.priority==='high'?-1:1):(a.deadline&&b.deadline?a.deadline.localeCompare(b.deadline):(b.created||0)-(a.created||0)));
+ $('#list').innerHTML=a.length?a.map(o=>`<article class="card" data-id="${esc(o.id)}"><div class="row"><div class="grow"><div class="title">${esc(o.product)} – ${esc(o.customer)}</div><div class="chips"><span class="chip ${o.status}">${label(o.status)}</span>${o.wa?'<span class="chip wait">Čaká na zákazníka</span>':''}${o.priority==='high'?'<span class="chip high">Urgentná</span>':''}</div><div class="meta"><span>◫ ${esc(o.qty||0)} ks</span><span>◷ ${date(o.deadline)}</span>${o.contact?`<span>♙ ${esc(o.contact)}</span>`:''}</div><div class="graphics"><span class="dot ${o.gd?'ok':''}"></span>${o.gd?'Grafika hotová':'Grafika čaká'}</div><div class="price"><span>${eur(o.sale)} / ks</span><strong>${eur(num(o.qty)*num(o.sale))}</strong></div></div><button class="chev">›</button></div></article>`).join(''):'<div class="empty"><b>Žiadne zákazky</b>Pridaj novú cez tlačidlo +.</div>';
+ $$('.card').forEach(x=>x.onclick=()=>edit(x.dataset.id));
+}
+function overview(){
+ let a=orders.filter(o=>o.status!=='done');$('#sa').textContent=a.length;$('#sp').textContent=orders.filter(o=>o.status==='prod').length;$('#ss').textContent=eur(a.reduce((s,o)=>s+num(o.qty)*num(o.sale),0));$('#sz').textContent=eur(a.reduce((s,o)=>s+num(o.qty)*(num(o.sale)-num(o.cost)),0));
+ let d=[...a].filter(o=>o.deadline).sort((a,b)=>a.deadline.localeCompare(b.deadline)).slice(0,8);$('#dues').innerHTML=d.length?d.map(o=>`<div class="due" data-id="${esc(o.id)}"><div><b>${esc(o.product)} – ${esc(o.customer)}</b><span>${label(o.status)}</span></div><b>${date(o.deadline)}</b></div>`).join(''):'<div class="empty">Žiadne zadané termíny.</div>';$$('.due').forEach(x=>x.onclick=()=>edit(x.dataset.id))
+}
+function calc(){let q=num($('#qty').value),c=num($('#cost').value),s=num($('#sale').value);$('#cc').textContent=eur(q*c);$('#cs').textContent=eur(q*s);$('#cz').textContent=eur(q*(s-c))}
+function clearForm(){['id','customer','product','qty','desc','cost','sale','contact','deadline','supplier','graphics'].forEach(x=>$('#'+x).value='');$('#priority').value='normal';['gd','ap','wa','paid'].forEach(x=>$('#'+x).checked=false);$('#status').value=status;calc()}
+function openNew(){clearForm();$('#formTitle').textContent='Nová zákazka';$('#editTools').style.display='none';$('#cover').classList.add('on')}
+function edit(id){let o=orders.find(x=>x.id===id);if(!o)return;$('#id').value=o.id;$('#customer').value=o.customer||'';$('#product').value=o.product||'';$('#qty').value=o.qty||'';$('#desc').value=o.desc||'';$('#cost').value=String(o.cost??'').replace('.',',');$('#sale').value=String(o.sale??'').replace('.',',');$('#contact').value=o.contact||'';$('#deadline').value=o.deadline||'';$('#supplier').value=o.supplier||'';$('#priority').value=o.priority||'normal';$('#graphics').value=o.graphics||'';['gd','ap','wa','paid'].forEach(x=>$('#'+x).checked=!!o[x]);$('#status').value=o.status;$('#formTitle').textContent='Upraviť zákazku';$('#editTools').style.display='block';calc();$('#cover').classList.add('on')}
+function close(){ $('#cover').classList.remove('on') }
+$('#add').onclick=openNew;$('#close').onclick=close;$('#cancel').onclick=close;$('#cover').onclick=e=>{if(e.target.id==='cover')close()};
+['qty','cost','sale'].forEach(x=>$('#'+x).oninput=calc);$('#search').oninput=render;
+$$('.tab').forEach(t=>t.onclick=()=>{status=t.dataset.status;$$('.tab').forEach(x=>x.classList.toggle('on',x===t));render()});
+$('#form').onsubmit=e=>{e.preventDefault();let id=$('#id').value,d={customer:$('#customer').value.trim(),product:$('#product').value.trim(),qty:num($('#qty').value),desc:$('#desc').value.trim(),cost:num($('#cost').value),sale:num($('#sale').value),contact:$('#contact').value.trim(),deadline:$('#deadline').value,supplier:$('#supplier').value.trim(),priority:$('#priority').value,graphics:$('#graphics').value.trim(),gd:$('#gd').checked,ap:$('#ap').checked,wa:$('#wa').checked,paid:$('#paid').checked,status:$('#status').value};if(id){let i=orders.findIndex(o=>o.id===id);orders[i]={...orders[i],...d};toast('Zákazka upravená')}else{orders.unshift({id:'o'+Date.now(),created:Date.now(),...d});toast('Zákazka pridaná')}status=d.status;$$('.tab').forEach(x=>x.classList.toggle('on',x.dataset.status===status));save();close()};
+$$('[data-move]').forEach(b=>b.onclick=()=>{let o=orders.find(x=>x.id===$('#id').value);if(!o)return;o.status=b.dataset.move;status=o.status;save();$$('.tab').forEach(x=>x.classList.toggle('on',x.dataset.status===status));toast('Stav zmenený');close()});
+$('#del').onclick=()=>{let id=$('#id').value;if(id&&confirm('Naozaj vymazať túto zákazku?')){orders=orders.filter(o=>o.id!==id);save();toast('Zákazka vymazaná');close()}};
+$$('.nav').forEach(b=>b.onclick=()=>{$$('.nav').forEach(x=>x.classList.toggle('on',x===b));$$('.page').forEach(p=>p.classList.toggle('on',p.id===b.dataset.page));if(b.dataset.page==='overview')overview()});
+load();render();overview();
+</script>
+</body></html>
