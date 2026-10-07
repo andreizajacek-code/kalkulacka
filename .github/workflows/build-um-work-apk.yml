@@ -27,15 +27,35 @@ jobs:
         with:
           gradle-version: '8.10.2'
 
-      - name: Build debug APK
-        run: gradle --no-daemon assembleDebug
+      - name: Restore stable debug signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: umwork-debug-keystore-v2
+
+      - name: Create debug signing key if missing
+        shell: bash
+        run: |
+          mkdir -p ~/.android
+          if [ ! -f ~/.android/debug.keystore ]; then
+            keytool -genkeypair -v               -keystore ~/.android/debug.keystore               -storepass android               -alias androiddebugkey               -keypass android               -keyalg RSA               -keysize 2048               -validity 10000               -dname "CN=Android Debug,O=Android,C=US"
+          fi
+
+      - name: Clean build APK
+        run: gradle --no-daemon clean assembleDebug
+
+      - name: Verify APK
+        shell: bash
+        run: |
+          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)
+          "$APKSIGNER" verify --verbose app/build/outputs/apk/debug/app-debug.apk
 
       - name: Copy APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk ../UM-WORK.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk ../UM-WORK-v2-CLEAN.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: UM-WORK-APK
-          path: UM-WORK.apk
+          name: UM-WORK-v2-CLEAN
+          path: UM-WORK-v2-CLEAN.apk
           if-no-files-found: error
