@@ -1,0 +1,60 @@
+name: Sign UM WORK v2
+
+on:
+  push:
+    branches:
+      - um-work-apk
+    paths:
+      - 'um-work-android/prebuilt-v2.b64'
+      - '.github/workflows/sign-um-work-v2.yml'
+  workflow_dispatch:
+
+jobs:
+  sign:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Restore signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/umwork.keystore
+          key: umwork-signing-key-v1
+
+      - name: Prepare signing key
+        shell: bash
+        run: |
+          mkdir -p ~/.android
+          if [ ! -f ~/.android/umwork.keystore ]; then
+            keytool -genkeypair -v               -keystore ~/.android/umwork.keystore               -storepass umwork2026               -alias umwork               -keypass umwork2026               -keyalg RSA               -keysize 2048               -validity 10000               -dname "CN=UM WORK,O=UM WEAR,C=SK"
+          fi
+
+      - name: Decode APK
+        run: base64 -d um-work-android/prebuilt-v2.b64 > UM-WORK-v2-unsigned.apk
+
+      - name: Find Android build tools
+        shell: bash
+        run: |
+          ZIPALIGN=$(find "$ANDROID_HOME/build-tools" -type f -name zipalign | sort -V | tail -1)
+          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)
+          echo "ZIPALIGN=$ZIPALIGN" >> "$GITHUB_ENV"
+          echo "APKSIGNER=$APKSIGNER" >> "$GITHUB_ENV"
+
+      - name: Align APK
+        run: '"$ZIPALIGN" -f -p 4 UM-WORK-v2-unsigned.apk UM-WORK-v2-aligned.apk'
+
+      - name: Sign APK
+        shell: bash
+        run: |
+          "$APKSIGNER" sign             --ks ~/.android/umwork.keystore             --ks-key-alias umwork             --ks-pass pass:umwork2026             --key-pass pass:umwork2026             --out UM-WORK-v2-FIX.apk             UM-WORK-v2-aligned.apk
+
+      - name: Verify APK signature
+        run: '"$APKSIGNER" verify --verbose --print-certs UM-WORK-v2-FIX.apk'
+
+      - name: Upload fixed APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: UM-WORK-v2-FIX
+          path: UM-WORK-v2-FIX.apk
+          if-no-files-found: error
