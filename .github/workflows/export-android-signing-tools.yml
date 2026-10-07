@@ -1,0 +1,29 @@
+name: Export Android signing tools
+
+on:
+  push:
+    branches:
+      - um-work-apk
+    paths:
+      - '.github/workflows/export-android-signing-tools.yml'
+  workflow_dispatch:
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Collect latest Android build tools
+        shell: bash
+        run: |
+          BT=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)
+          mkdir signing-tools
+          cp "$BT/zipalign" signing-tools/
+          cp "$BT/apksigner" signing-tools/
+          cp "$BT/lib/apksigner.jar" signing-tools/
+          cp "$BT/aapt" signing-tools/
+          chmod +x signing-tools/zipalign signing-tools/apksigner signing-tools/aapt
+      - name: Upload signing tools
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-signing-tools
+          path: signing-tools
