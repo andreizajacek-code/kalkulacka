@@ -21,9 +21,13 @@ jobs:
           cp "$BT/apksigner" signing-tools/
           cp "$BT/lib/apksigner.jar" signing-tools/
           cp "$BT/aapt" signing-tools/
+          LIBCPP=$(find "$ANDROID_HOME" -type f -name 'libc++.so' | head -1)
+          if [ -n "$LIBCPP" ]; then cp "$LIBCPP" signing-tools/; fi
           chmod +x signing-tools/zipalign signing-tools/apksigner signing-tools/aapt
       - name: Upload signing tools
         uses: actions/upload-artifact@v4
         with:
           name: android-signing-tools
           path: signing-tools
+
+# export-libcpp-v2
